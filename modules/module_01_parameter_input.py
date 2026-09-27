@@ -3,7 +3,6 @@
 # - Luu thong so de giay
 # - Kiem tra thong so co hop le hay khong
 
-
 class SoleParameters(object):
 
     def __init__(self, length, width, height,
@@ -50,25 +49,62 @@ class SoleParameters(object):
 
 
 # --------------------------------------------------
-# TEST
+# TEST (chay doc lap, khong can Grasshopper)
 # --------------------------------------------------
+if __name__ == "__main__":
+    params = SoleParameters(
+        length=280,
+        width=90,
+        height=30,
+        section_position=140,
+        offset=-2,
+        trim=1
+    )
 
-params = SoleParameters(
-    length=280,
-    width=90,
-    height=30,
-    section_position=140,
-    offset=-2,
-    trim=1
-)
+    valid, errors = params.validate()
 
-valid, errors = params.validate()
+    print("Valid:", valid)
+    if not valid:
+        for error in errors:
+            print("Error:", error)
 
-print("Valid:", valid)
 
-if not valid:
-    for error in errors:
-        print("Error:", error)
+# ============================================================
+# CODE TRONG GRASSHOPPER (GHPYTHON / SCRIPT COMPONENT)
+# ============================================================
+# class SoleParameters(object):
+#     def __init__(self, length, width, height,
+#                  section_position, offset=0, trim=0):
+#         self.length = length
+#         self.width = width
+#         self.height = height
+#         self.section_position = section_position
+#         self.offset = offset
+#         self.trim = trim
+#     def validate(self):
+#         errors = []
+#         if self.length <= 0:
+#             errors.append("Length phai > 0")
+#         if self.width <= 0:
+#             errors.append("Width phai > 0")
+#         if self.height <= 0:
+#             errors.append("Height phai > 0")
+#         if not (0 <= self.section_position <= self.length):
+#             errors.append("Section Position phai nam trong Length")
+#         if self.trim < 0:
+#             errors.append("Trim khong duoc am")
+#         if abs(self.offset) >= self.width / 2:
+#             errors.append("Offset qua lon")
+#         if len(errors) == 0:
+#             return True, errors
+#         else:
+#             return False, errors
+# params = SoleParameters(length, width, height, section_position, offset, trim)
+# valid, errors = params.validate()
+# report = []
+# report.append("VALID: " + str(valid))
+# report.extend(errors)
+# B = report
 
 # ============================================================
 # HUONG DAN GRASSHOPPER - RHINO 7 / GHPYTHON
@@ -112,32 +148,22 @@ if not valid:
 #       Max = 20
 #       Value = 1
 #
-# 2. TAO GHPYTHON
+# 2. TAO PYTHON SCRIPT COMPONENT
 # Double-click vao canvas -> go "GHPython".
-# Right-click vao cac input cua GHPython -> Rename thanh:
-#   len
-#   width
-#   height
-#   section_postion
-#   offset
-#   trim
+# Trong cua so code editor cua component:
+#   - Tao 6 INPUT, dat ten dung: length, width, height, section_position, offset, trim
+#   - Tao Output dat ten: B
 # Noi 6 Number Slider vao 6 input tuong ung.
 #
 # 3. CODE GHPYTHON
-# Copy class SoleParameters va ham validate() vao GHPython.
-#
-# Cuoi code them:
-#     params = SoleParameters(Len, Width, Height, Section_Postion, Offset, Trim)
-#     valid, errors = params.validate()
-#     A = valid
-#     B = errors
+# Paste toan bo class SoleParameters + doan code o muc
+# "CODE DUNG TRONG GRASSHOPPER" o tren vao component.
 #
 # 4. TAO PANEL
 # Double-click vao canvas -> go "Panel".
-# Noi output A vao Panel de xem:
-#     True / False
-# Tao Panel thu hai va noi output B vao Panel
-# de xem danh sach loi.
+# Noi output B vao Panel de xem ket qua dang danh sach:
+#     Dong 0: VALID: True / False
+#     Cac dong sau (neu co): tung loi cu the
 #
 # 5. TEST
 # Gia tri ban dau:
@@ -148,8 +174,10 @@ if not valid:
 #   Offset           = -2
 #   Trim             = 1
 #
-# Ket qua:
-#   Valid = True
-# Thu thay doi Trim = -5:
-#   Valid = False
+# Ket qua tren Panel:
+#   VALID: True
+#
+# Thu doi Trim = -3:
+# Ket qua tren Panel:
+#   VALID: False
 #   Trim khong duoc am
