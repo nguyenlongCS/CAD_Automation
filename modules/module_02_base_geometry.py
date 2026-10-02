@@ -49,9 +49,6 @@ class BaseGeometry(object):
         return self.base_rectangle, self.base_box
 
 
-# --------------------------------------------------
-# TEST (chay doc lap, khong can Grasshopper)
-# --------------------------------------------------
 if __name__ == "__main__":
     geo = BaseGeometry(length=280, width=90, height=30)
     rect, box = geo.generate()
@@ -103,17 +100,12 @@ if __name__ == "__main__":
 #   - Tao 2 OUTPUT dat ten: R (rectangle), X (box)
 # Noi 3 slider (length, width, height) vao 3 input tuong ung.
 #
-# 3. CODE GHPYTHON
-# Paste toan bo class BaseGeometry + doan code o muc
-# "CODE DUNG TRONG GRASSHOPPER" o tren vao component.
-#
-# 4. XEM KET QUA
+# 3. XEM KET QUA
 # Khac voi Module 2.1 (chi ra text), o day R va X la geometry that
 # nen Grasshopper se tu dong hien thi Rectangle va Box ngay trong
 # Rhino viewport - khong can Panel.
-# Neu khong thay gi: bam phim "P" tren component de bat/tat preview.
 #
-# 5. TEST
+# 4. TEST
 # Gia tri:
 #   Length = 280
 #   Width  = 90
