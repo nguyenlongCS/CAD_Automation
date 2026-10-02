@@ -48,9 +48,6 @@ class SoleParameters(object):
             return False, errors
 
 
-# --------------------------------------------------
-# TEST (chay doc lap, khong can Grasshopper)
-# --------------------------------------------------
 if __name__ == "__main__":
     params = SoleParameters(
         length=280,
@@ -155,17 +152,13 @@ if __name__ == "__main__":
 #   - Tao Output dat ten: B
 # Noi 6 Number Slider vao 6 input tuong ung.
 #
-# 3. CODE GHPYTHON
-# Paste toan bo class SoleParameters + doan code o muc
-# "CODE DUNG TRONG GRASSHOPPER" o tren vao component.
-#
-# 4. TAO PANEL
+# 3. TAO PANEL
 # Double-click vao canvas -> go "Panel".
 # Noi output B vao Panel de xem ket qua dang danh sach:
 #     Dong 0: VALID: True / False
 #     Cac dong sau (neu co): tung loi cu the
 #
-# 5. TEST
+# 4. TEST
 # Gia tri ban dau:
 #   Length           = 280
 #   Width            = 90
