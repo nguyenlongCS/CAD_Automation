@@ -1,8 +1,10 @@
 # Module 2.5 - Offset / Trim
 # Nhiem vu:
-# - Trim: cat bo doan co do dai = trim o 2 dau (mui/got) doc truc Length
-# - Offset: offset surface theo phap tuyen, khoang cach = offset (am = vao trong)
-# - Nhan surface tu Module 2.4, tra ve surface da xu ly
+# - Trim: cat bo doan co do dai = trim o 2 dau (mui/got) doc truc Length,
+#   bang cach tao lai section tai 2 vi tri cat va bo cac section nam ngoai
+# - Offset: mo rong / thu nho tung section theo offset (am = vao trong)
+# - Loft lai cac section da xu ly thanh surface
+# - Nhan danh sach section tu Module 2.3, tra ve surface da xu ly
 
 def compute_offset_trim(length, width, height, offset, trim):
     """Tinh khoang x con lai va kich thuoc sau offset - dung de test doc lap, khong can Rhino."""
@@ -29,26 +31,43 @@ if __name__ == "__main__":
 # CODE TRONG GRASSHOPPER (GHPYTHON / SCRIPT COMPONENT)
 # ============================================================
 # import Rhino.Geometry as rg
-# import scriptcontext as sc
 #
-# tol = sc.doc.ModelAbsoluteTolerance
-# bbox = brep.GetBoundingBox(True)
-#
-# cut_start = rg.Plane(rg.Point3d(bbox.Min.X + trim, 0, 0), rg.Vector3d(-1, 0, 0))
-# cut_end = rg.Plane(rg.Point3d(bbox.Max.X - trim, 0, 0), rg.Vector3d(1, 0, 0))
-#
-# result = brep
+# rects = []
+# for c in sections:
+#     bb = c.GetBoundingBox(True)
+#     rects.append((bb.Min.X, bb.Min.Y, bb.Max.Y, bb.Min.Z, bb.Max.Z))
 #
 # if trim > 0:
-#     for plane in (cut_start, cut_end):
-#         parts = result.Trim(plane, tol) if result else None
-#         result = parts[0] if parts else None
+#     base = rg.Brep.CreateFromLoft(
+#         sections, rg.Point3d.Unset, rg.Point3d.Unset, rg.LoftType.Normal, False
+#     )[0]
+#     bbox = base.GetBoundingBox(True)
+#     xa = bbox.Min.X + trim
+#     xb = bbox.Max.X - trim
+#     ends = []
+#     for x in (xa, xb):
+#         cut = rg.Brep.CreateContourCurves(base, rg.Plane(rg.Point3d(x, 0, 0), rg.Vector3d.XAxis))
+#         bb = rg.Curve.JoinCurves(cut)[0].GetBoundingBox(True)
+#         ends.append((x, bb.Min.Y, bb.Max.Y, bb.Min.Z, bb.Max.Z))
+#     rects = [ends[0]] + [r for r in rects if xa < r[0] < xb] + [ends[1]]
 #
-# if result and offset != 0:
-#     off = rg.Brep.CreateOffsetBrep(result, offset, False, True, tol)
-#     result = off[0][0] if off[0] else None
+# curves = []
+# for x, y0, y1, z0, z1 in rects:
+#     y0, y1, z0, z1 = y0 - offset, y1 + offset, z0 - offset, z1 + offset
+#     pts = [
+#         rg.Point3d(x, y0, z0),
+#         rg.Point3d(x, y1, z0),
+#         rg.Point3d(x, y1, z1),
+#         rg.Point3d(x, y0, z1),
+#         rg.Point3d(x, y0, z0)
+#     ]
+#     curves.append(rg.Polyline(pts).ToNurbsCurve())
 #
-# T = result
+# loft = rg.Brep.CreateFromLoft(
+#     curves, rg.Point3d.Unset, rg.Point3d.Unset, rg.LoftType.Normal, False
+# )
+#
+# T = loft[0] if loft else None
 
 # ============================================================
 # HUONG DAN GRASSHOPPER - RHINO 7 / GHPYTHON
@@ -56,16 +75,15 @@ if __name__ == "__main__":
 # 1. DUNG LAI 2 NUMBER SLIDER TU MODULE 2.1
 # Chi can: offset, trim.
 #
-# 2. TAO PYTHON SCRIPT COMPONENT MOI
-# Double-click canvas -> go "GHPython".
+# 2. PYTHON SCRIPT COMPONENT MODULE 2.5
 # Trong component:
-#   - Tao 3 INPUT dat ten dung: brep, offset, trim
-#       Right-click input "brep" -> Type hint: Brep
-#       Right-click input "brep" -> Access: Item Access
-#   - Tao 1 OUTPUT dat ten: T
+#   - 3 INPUT dat ten dung: sections, offset, trim
+#       Right-click input "sections" -> Type hint: Curve
+#       Right-click input "sections" -> Access: List Access
+#   - 1 OUTPUT dat ten: T
 #
 # 3. NOI DAY
-# Noi output L cua component Module 2.4 vao input brep.
+# Noi output S cua component Module 2.3 vao input sections.
 # Noi slider offset va trim vao 2 input tuong ung.
 #
 # 4. XEM KET QUA
@@ -73,5 +91,5 @@ if __name__ == "__main__":
 #
 # 5. TEST
 # Gia tri: Offset = -2, Trim = 1
-# Ket qua: surface ngan di 1 o moi dau (x tu 1 den 279), thu nho vao trong 2 theo phap tuyen.
-# Offset = 0 va Trim = 0: T giong surface cua Module 2.4.
+# Ket qua: surface ngan di 1 o moi dau (x tu 1 den 279), thu nho vao trong 2 moi phia,
+# van gom 6 section, 2 dau phang de Module 2.6 dong nap.
